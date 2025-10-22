@@ -126,7 +126,7 @@ fun main() {
     // тернарного оператора не існує
     if (isTrue) println(true) else println(false) // максимум 1 рядок коду
 
-
+    // тест
 
 }
 
