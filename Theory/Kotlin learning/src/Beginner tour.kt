@@ -16,6 +16,23 @@ fun div(a: Int = 15, b: Int = 3): Int { // значення параметрів
     return a / b
 }
 
+fun withoutReturn() {
+    println("hello")
+}
+
+fun sub(a: Int = 10, b: Int): Int = a - b // Одновиразна функція
+
+
+fun function(num: Int): Int { // Раннє повернення в фукнції
+    if (num == 5) {
+        return 0
+    }
+
+    return num + 2
+}
+
+fun getLambda(): (Int) -> Int  = {x -> x / 2}
+
 fun main() {
 
     // тіло функції
@@ -210,6 +227,34 @@ fun main() {
 
     println(div())
     println(div(b = 1))
+
+    withoutReturn() // повертає unit
+
+    println(sub(b = 5))
+
+    function(5)
+
+    val mul = {a: Int, b: Int -> a * b} // лямбда вираз
+    mul(3, 5)
+
+
+    val numList = listOf(-1, 2, 3, 0, -2, -4, 2)
+
+    val negatives = numList.filter({x -> x < 0}) // лямбда вираз, як придикат
+    val isPositive = {x: Int -> x > 0}
+    val positives = numList.filter(isPositive)
+
+
+    // val lambda = {x -> x * 2} помилка, оскільки не можна визначити тип функції по типу параметрів
+    val lambda: (Int) -> Int = {x -> x * 2} // явний тип лямбда функції
+
+    val lambda1 = getLambda() // повернення лямбда функції
+    println(numList.map(getLambda()))
+
+    val y = {x: Int -> x + 1}(3) // окреме викликання
+    println(y)
+
+    println(numList.filter {x -> x < 0}) // кінцева лямбда, якщо параметр один або останній
 }
 
 
