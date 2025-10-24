@@ -31,6 +31,36 @@ fun function(num: Int): Int { // Раннє повернення в фукнці
     return num + 2
 }
 
+class Example( // ( властивості (properties) ) + вміст в дужках - заголовок класу (class header)
+    val a: Int,
+    val b: Int = 3, // властивість за замовчуванням
+    i: Int = 0, // "приватна" властивість
+    ) {
+
+    // може бути декілька конструкторів
+
+    // властивості у тілі класу
+    val c: Int = 1 // властивість в тілі повинна бути проініціалізованою, тобто за замовчуванням
+    var d: String = "Name"
+    // f: String = "Name1" - помилка, приватні властивості тільки в заголовку
+
+
+    fun sumAB(): Int { // функція-член (function member)
+        return a + b
+    }
+}
+
+data class DataClass( // клас даних (Data class) з попередньо визначеними функціями-членами для
+    // зручного виводу
+    // порівняння екземплярів
+    // копіювання
+    // та інше
+    val name: String,
+    var age: Int,
+) {
+
+}
+
 fun getLambda(): (Int) -> Int  = {x -> x / 2}
 
 fun main() {
@@ -255,6 +285,43 @@ fun main() {
     println(y)
 
     println(numList.filter {x -> x < 0}) // кінцева лямбда, якщо параметр один або останній
+
+
+
+    val myClass: Example = Example(a = 2, i = 2) // оголошення екземпляра (instance) класу example
+    myClass.a // властивість, оголошена в заголовку класу
+    // myClass.i - помилка, оскільки i приватна властивість
+    myClass.d // властивість оголошена в тілі класу
+    println(myClass.sumAB()) // виклик функції-члену екземпляра касу
+
+    val dataClass: DataClass = DataClass(name = "Roma", age = 20)
+    println(dataClass.toString()) // вивід + явний виклик функції
+    println(dataClass)
+    val dataClass1: DataClass = dataClass.copy(name = "Name") // копіювання екземпляра з оновленням параметра
+    println(dataClass.equals(dataClass1)) // порівняння екземплярів
+    println(dataClass == dataClass1)
+
+
+    val j: String? = null // nullable тип
+    var k = 1
+    // k = null - помилка, оскільки k має тип Int, а не Int?
+    // val m: Int = null - помилка, non-nullable тип
+
+    val l = null
+    if (l == null) println("Is null") // перевірка на null за допомогою умовного виразу
+
+
+    val ua: String? = null
+    ua?.length // оператор безпечного виклику для повернення null (а не помилки),
+    // якщо об'єкт або його властивість є null
+
+    // також використовується для функцій та функцій-розширень,
+    // у такому випаду замість виклику функції повертається null
+
+    ua?.length ?: 2 // ?: - оператор елвіса, який повертає значення за замовчуванням, якщо виявлено null
+
+
+
 }
 
 
