@@ -1,6 +1,32 @@
 
 import kotlin.random.Random
 
+fun checkGameOver(openedCell: List<Int>, minedCells: List<List<Int>>) = openedCell in minedCells
+
+fun processPlayerInput() {
+    val inputPattern: Regex = Regex("""\d+\s\d+(\s(f|uf))?""")
+    var playerInput: String
+    while (true) {
+        playerInput = readln()
+        if (inputPattern.matches(playerInput)) break
+    }
+    val inputParts: List<String> = playerInput.split(" ")
+    val actionType: String
+    val cellXPos: Int = inputParts[0].toInt()
+    val cellYPos: Int = inputParts[1].toInt()
+    if (inputParts.count() == 2) actionType = "o" else actionType = inputParts[2]
+
+    println(
+        when (actionType) {
+            "o" -> "Open cell"
+            "f" -> "Flag cell"
+            "uf" -> "Unflag cell"
+            else -> "Unknown command"
+        }
+    )
+
+}
+
 fun countMinesAround(cell: List<Int>, minedCells: List<List<Int>>): Int {
     var minesAround: Int = 0
 
@@ -52,14 +78,18 @@ fun generateMines(minesNum: Int, fieldSizeX: Int, fieldSizeY: Int): MutableList<
 }
 
 fun main() {
-//    val minedCells: List<List<Int>> = generateMines(10, 5, 5)
-    val minedCells: List<List<Int>> = listOf(listOf(2, 2), listOf(3, 2), listOf(4, 2), listOf(2, 3), listOf(4, 3), listOf(2, 4), listOf(3, 4), listOf(4, 4),)
-    val openedCells: MutableMap<List<Int>, Int> = mutableMapOf(listOf(1, 1) to 3, listOf(1, 2) to 4)
-    val flaggedCells: MutableList<List<Int>> = mutableListOf(listOf(3, 3), listOf(3, 4))
-    print(minedCells)
-    println(countMinesAround(listOf(3, 3), minedCells))
+    val minesNum: Int = 8
+    val fieldSizeX: Int = 5
+    val fieldSizeY: Int = 5
 
-    drawField(5, 5, openedCells, flaggedCells)
+    val minedCells: List<List<Int>> = generateMines(minesNum, fieldSizeX, fieldSizeY)
+    val openedCells: MutableMap<List<Int>, Int> = mutableMapOf()
+    val flaggedCells: MutableList<List<Int>> = mutableListOf()
+    while (true) {
+        drawField(fieldSizeX, fieldSizeY, openedCells, flaggedCells)
+        processPlayerInput()
+
+    }
 }
 
 // список з координатами мін - done
@@ -68,3 +98,4 @@ fun main() {
 // функція для генерації мін - done
 // функція для малювання поля - done
 // функція для обрахунку мін поряд - done
+// функція обробки вводу користувача
