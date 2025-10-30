@@ -1,5 +1,6 @@
 package com.example.firstcomposeapp
 
+import android.app.people.ConversationStatus
 import android.media.Image
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -31,6 +32,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.MaterialTheme
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +55,8 @@ class MainActivity : ComponentActivity() {
                 // стилізує дочірні елементи темою, яка описана в Theme.kt
                 // MaterialTheme надає доступ до значень елементів теми застосунку
                 Surface(Modifier.fillMaxSize()) {
-                    MessageCard(Message("Roma", "Hello, world!")) // виклик compose-fun
+                    // MessageCard(Message("Roma", "Hello, world!")) // виклик compose-fun
+                    Conversation(conversation)
                 }
             }
             // Text("Hello, JetpackCompose!") // Text є composable-функцією
@@ -67,11 +78,29 @@ fun MessageCard(msg: Message) { // визначення (define) compose-fun
                 .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
         )
         Spacer(Modifier.width(8.dp))
-        Column { // column composable
+
+        // isExpanded - локальний стан compose-fun
+        // (у нашому прикладі - Text composable)
+        var isExpanded by remember { mutableStateOf(false) } // відстеження стану ui елемента
+        // compose-fun, які використовують цей стан,
+        // і дочірні елементи цієї функції
+        // автоматично перемалюються при його оновленні
+        // - це перекомозування (recomposition)
+
+        val surfaceColor by animateColorAsState( // by - оператор делегування
+            // значення surfaceColor делегується animateColorAsState
+            if (isExpanded) MaterialTheme.colorScheme.primary else
+                MaterialTheme.colorScheme.secondary
+        )
+
+        Column(Modifier.clickable {isExpanded = !isExpanded}) { // column composable
             Text(msg.author, color = MaterialTheme.colorScheme.secondary, style = MaterialTheme.typography.titleSmall)
             Spacer(Modifier.height(4.dp))
-            Surface(shape = MaterialTheme.shapes.medium, shadowElevation = 1.dp) {
-                Text(msg.body, Modifier.padding(4.dp), style = MaterialTheme.typography.titleSmall)
+            Surface(shape = MaterialTheme.shapes.medium, shadowElevation = 1.dp,
+                color = surfaceColor,
+                modifier = Modifier.animateContentSize().padding(1.dp)) {
+                Text(msg.body, Modifier.padding(4.dp), style = MaterialTheme.typography.titleSmall,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 1)
             }
         }
     }
@@ -97,3 +126,30 @@ fun PreviewMessageCard() {
 // ui ієрархічний -> певна compose-fun викликає іншу compose-fun
 
 data class Message(val author: String, val body: String)
+
+@Composable
+fun Conversation(messages: List<Message>) {
+    LazyColumn { // відображаються лише ті елементи, які видно на екрані
+        // оптимізований під великі списки
+        items(messages) {message ->
+            MessageCard(message)
+        }
+    }
+}
+
+val conversation: List<Message> = listOf(
+    Message("Roma", "Hello"),
+    Message("Sorom", "Hello, sorom"),
+    Message("peacemaker", "hello, world"),
+    Message("rpu", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque consequat lorem sed dapibus interdum. Proin.")
+)
+
+@Preview
+@Composable
+fun PreviewConversation() {
+    FirstComposeAppTheme {
+        Surface {
+            Conversation(conversation)
+        }
+    }
+}
