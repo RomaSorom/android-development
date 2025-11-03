@@ -1,6 +1,7 @@
 package com.example.composeessentials
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,8 +14,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.composeessentials.ui.theme.ComposeEssentialsTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,13 +31,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposeEssentialsTheme {
 
-                var num = 5
+//                var num = 5
+//
+//                Column {
+//                    showNum(num)
+//                    Abc(4) {newNum -> num = newNum}
+//                }
 
-                Column {
-                    showNum(num)
-                    Abc(4) {newNum -> num = newNum}
-                }
-
+                RecompositionTest()
 
                     // мислення в compose:
                         // "що", а не "як"
@@ -85,6 +93,65 @@ fun Abc(num: Int, changeNum: (Int) -> Unit) {
             changeNum(num)
         },
         text = "Add item"
+    )
+}
+
+
+// перекомпозиція відбувається у composable, які використовують стан, що змінився
+// перекомпозиція починається з composable, в якому оголошено стан
+
+@Composable
+fun RecompositionTest() {
+    Log.d("Compose test", "RecompositionTest was recomposed") // перекомпозовується, оскільки є взаємодія на рядку 112
+    var isBlack: Boolean by remember { mutableStateOf(true) }
+    Column(
+        modifier = Modifier.padding(30.dp)
+    ) {
+        MiddleLayer(isBlack) {isBlack = !isBlack}
+    }
+}
+
+@Composable
+fun MiddleLayer(isBlack: Boolean, changeColor: () -> Unit) {
+    Log.d("Compose test", "MiddleLayer was recomposed") // перекопозовується, оскільки параметр отримує нове значення
+    Column {
+        Text(
+            "Change color",
+            modifier = Modifier.clickable { changeColor() }
+        )
+        ColorText(isBlack)
+    }
+}
+
+@Composable
+fun ColorText(isBlack: Boolean) {
+    Log.d("Compose test", "ColorText was recomposed") // перекопозовується, оскільки параметр отримує нове значення
+    Column {
+        Text(
+            "Text for testing...",
+            color = if (isBlack) Color.Black else Color.Red
+        )
+        ChildText(isBlack)
+    }
+}
+
+@Composable
+fun ChildText(isBlack: Boolean) {
+    Log.d("Compose test", "ChildText was recomposed") // перекомпозовується, оскільки параметр отримує нове значення
+    Column {
+        Text(
+            "Another text"
+        )
+        LastLayer(isBlack)
+    }
+}
+
+@Composable
+fun LastLayer(isBlack: Boolean) {
+    Log.d("Compose test", "LastLayer was recomposed") // не перекомпозовується, оскільки стан не використовується
+    Text(
+        "Last text",
+        //color = if (isBlack) Color.Black else Color.Green
     )
 }
 
