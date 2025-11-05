@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -59,7 +63,7 @@ fun MyApp() {
 @Composable
 fun SafeArea(modifier: Modifier = Modifier) {
     val list: List<String> = List(100) { "$it" }
-    var showOnboarding: Boolean by remember { mutableStateOf(true) }
+    var showOnboarding: Boolean by rememberSaveable { mutableStateOf(true) }
     if (showOnboarding) {
         OnboardingScreen(modifier = modifier) { showOnboarding = false }
     } else {
@@ -69,8 +73,15 @@ fun SafeArea(modifier: Modifier = Modifier) {
 
 @Composable
 fun Greeting(name: String) {
-    var isExpanded: Boolean by remember { mutableStateOf(false) }
-    val extraPadding: Dp = if (isExpanded) 100.dp else 0.dp
+    var isExpanded: Boolean by rememberSaveable { mutableStateOf(false) }
+
+    val extraPadding: Dp by animateDpAsState(
+        if (isExpanded) 48.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
 
     Surface(
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
@@ -82,11 +93,13 @@ fun Greeting(name: String) {
                 .padding(all = 24.dp)
         ) {
             Column(
-                modifier = Modifier.padding(bottom = extraPadding)
+                modifier = Modifier.padding(bottom = extraPadding.coerceAtLeast(0.dp))
                     //.fillMaxWidth(),
             ) {
                 Text(text = "Hello,")
-                Text(text = "$name!")
+                Text(text = "$name!", style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.ExtraBold
+                ))
             }
             ElevatedButton(
                 onClick = { isExpanded = !isExpanded },
