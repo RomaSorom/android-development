@@ -9,7 +9,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,12 +22,14 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -37,6 +43,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.uifocusedapp.ui.theme.UIFocusedAppTheme
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.items
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,8 +54,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             UIFocusedAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    SearchBar(modifier = Modifier.padding(innerPadding))
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        SearchBar()
+                    }
+                ) { innerPadding ->
+                    Column {
+                        MountainsRow(modifier = Modifier.padding(innerPadding))
+                        MyCardGrid()
+                    }
                 }
             }
         }
@@ -91,7 +109,6 @@ fun SearchBar(modifier: Modifier = Modifier) {
         },
         modifier = modifier.fillMaxWidth()
             .heightIn(min = 56.dp)
-            .padding(16.dp)
     )
 }
 
@@ -99,7 +116,7 @@ fun SearchBar(modifier: Modifier = Modifier) {
 @Composable
 fun SearchBarPreview() {
     UIFocusedAppTheme {
-        SearchBar()
+        SearchBar(modifier = Modifier.padding(16.dp))
     }
 }
 
@@ -133,6 +150,104 @@ fun Mountain(
 fun MountainPreview() {
     Mountain(
         drawable = R.drawable.mountain,
-        text = R.string.app_name
+        text = R.string.app_name,
+        modifier = Modifier.padding(8.dp)
     )
+}
+
+@Composable
+fun MyCard(
+    modifier: Modifier = Modifier,
+    @DrawableRes drawable: Int,
+    @StringRes text: Int
+) {
+    Surface(
+        shape = MaterialTheme.shapes.medium,
+        modifier = modifier
+            .height(80.dp)
+            .width(255.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painter = painterResource(drawable),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(80.dp)
+            )
+            Text(
+                text = stringResource(text),
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MyCardPreview() {
+    MaterialTheme {
+        MyCard(
+            drawable = R.drawable.mountain,
+            text = R.string.app_name,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+
+@Composable
+fun MountainsRow(
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        modifier = modifier
+    ) {
+        items(9) {
+            Mountain(
+                drawable = R.drawable.mountain,
+                text = R.string.app_name
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MountainsRowPreview() {
+    MaterialTheme {
+        MountainsRow(modifier = Modifier.padding(8.dp))
+    }
+}
+
+@Composable
+fun MyCardGrid(
+    modifier: Modifier = Modifier
+) {
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier
+            .height(168.dp)
+    ) {
+        items(9) {
+            MyCard(
+                drawable = R.drawable.mountain,
+                text = R.string.app_name
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MyCardGridPreview() {
+    MaterialTheme {
+        MyCardGrid()
+    }
 }
