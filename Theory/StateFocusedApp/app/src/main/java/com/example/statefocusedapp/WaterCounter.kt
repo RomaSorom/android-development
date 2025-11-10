@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,10 +22,13 @@ fun WaterCounter(
     modifier: Modifier = Modifier
 ) {
     var glasses: Int by remember { mutableStateOf(value = 0) }
+    // var showTask: Boolean by remember { mutableStateOf(value = true) } цей стан завжди зберігається в композиції,
+    // оскільки remember завжди викликається
     Column(
         modifier = modifier
     ) {
-        if (glasses > 0) {
+        if (glasses > 0) { // якщо remember не виконуться під час композиції, композ забуває стан,
+            // який цей remember зберігав в композиції
             var showTask: Boolean by remember { mutableStateOf(value = true) }
             if (showTask) {
                 TaskItem(
