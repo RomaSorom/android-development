@@ -1,5 +1,6 @@
 package com.example.statefocusedapp
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,9 +16,10 @@ fun MainScreen(
     modifier: Modifier = Modifier
 ) {
     var glasses: Int by remember { mutableStateOf(value = 0) }
-    WaterCounter(
-        modifier = modifier,
-        glasses = glasses,
-        onGlassesChanges = { increment -> glasses += increment }
-    )
+    Column(
+        modifier = modifier
+    ) {
+        StateFull()
+        TasksList()
+    }
 }
