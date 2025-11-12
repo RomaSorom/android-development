@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.component1
@@ -16,10 +17,14 @@ fun MainScreen(
     modifier: Modifier = Modifier
 ) {
     var glasses: Int by remember { mutableStateOf(value = 0) }
+    val list = remember { getTasksList().toMutableStateList() } // mutableStateListOf()/
+    // .toMutableStateList() - аналог mutableStateOf() для списків
     Column(
         modifier = modifier
     ) {
         StateFull()
-        TasksList()
+        TasksList(list = list, onCloseTask = { task -> list.remove(task) })
     }
 }
+
+fun getTasksList() = List(30) { i -> Task(i, "Task # $i") }

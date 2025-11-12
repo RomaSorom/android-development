@@ -29,7 +29,7 @@ fun TaskItem(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     text: String,
-    onClose: () -> Unit
+    onCloseTask: () -> Unit
 ) {
     Surface(
         modifier = modifier
@@ -51,7 +51,7 @@ fun TaskItem(
                     imageVector = Icons.Default.Close,
                     contentDescription = null,
                     modifier = Modifier
-                        .clickable { onClose() }
+                        .clickable { onCloseTask() }
                 )
             }
         }
@@ -60,12 +60,13 @@ fun TaskItem(
 
 @Composable
 fun TaskItem(text: String,
+             onCloseTask: () -> Unit,
              modifier: Modifier = Modifier) {
     var checkedState: Boolean by rememberSaveable { mutableStateOf(false) }
 
     TaskItem(checked = checkedState,
         onCheckedChange = { bool -> checkedState = bool },
-        text = text) { }
+        text = text) { onCloseTask() }
 }
 
 @Preview
@@ -78,7 +79,7 @@ fun TaskItemPreview() {
                 text = "New Task Item",
                 checked = true,
                 onCheckedChange = { },
-                onClose = {  }
+                onCloseTask = {  }
             )
         }
     }
