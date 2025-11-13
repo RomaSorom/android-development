@@ -60,13 +60,16 @@ fun TaskItem(
 
 @Composable
 fun TaskItem(text: String,
+             checked: Boolean,
              onCloseTask: () -> Unit,
-             modifier: Modifier = Modifier) {
-    var checkedState: Boolean by rememberSaveable { mutableStateOf(false) }
+             modifier: Modifier = Modifier,
+             onCheckedTask: (Boolean) -> Unit) {
+    //var checkedState: Boolean by rememberSaveable { mutableStateOf(false) }
 
-    TaskItem(checked = checkedState,
-        onCheckedChange = { bool -> checkedState = bool },
-        text = text) { onCloseTask() }
+    TaskItem(checked = checked,
+        onCheckedChange = onCheckedTask,
+        text = text,
+        ) { onCloseTask() }
 }
 
 @Preview

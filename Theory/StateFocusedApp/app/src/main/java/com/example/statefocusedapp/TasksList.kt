@@ -12,12 +12,14 @@ import androidx.compose.ui.Modifier
 fun TasksList(
     modifier: Modifier = Modifier,
     list: List<Task>,
-    onCloseTask: (Task) -> Unit
+    onCloseTask: (Task) -> Unit,
+    onCheckedTask: (Task, Boolean) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
         items(list,
             key = { task -> task.id }) {
-            task -> TaskItem(task.label, onCloseTask = { onCloseTask(task) })
+            task -> TaskItem(task.label, task.checked, onCloseTask = { onCloseTask(task) },
+                onCheckedTask = { cheked -> onCheckedTask(task, cheked) })
         }
     }
 }

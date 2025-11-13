@@ -11,20 +11,24 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.component1
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun MainScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    myViewModel: MyViewModel = viewModel()
 ) {
     var glasses: Int by remember { mutableStateOf(value = 0) }
-    val list = remember { getTasksList().toMutableStateList() } // mutableStateListOf()/
+    //val list = remember { getTasksList().toMutableStateList() } // mutableStateListOf()/
     // .toMutableStateList() - аналог mutableStateOf() для списків
+
     Column(
         modifier = modifier
     ) {
         StateFull()
-        TasksList(list = list, onCloseTask = { task -> list.remove(task) })
+        TasksList(list = myViewModel.list, onCloseTask = { task -> myViewModel.remove(task) },
+            onCheckedTask = { task, checked -> myViewModel.changeTaskChecked(task, checked) })
     }
 }
 
-fun getTasksList() = List(30) { i -> Task(i, "Task # $i") }
+// fun getTasksList() = List(30) { i -> Task(i, "Task # $i") }
